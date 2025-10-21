@@ -28,10 +28,10 @@ SECRET_KEY = env("SECRET_KEY", default="change_me")
 
 DEBUG = env("DEBUG", default=False)  
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+ALLOWED_HOSTS = ["ysaone.applikuapp.com", "localhost", "127.0.0.1"]
 
 
-# Application definition
+# Application definitions
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -85,7 +85,7 @@ DATABASES = {
     "default": dj_database_url.config(
         env="DATABASE_URL",
         conn_max_age=600,
-        ssl_require=True,             # set False if your DB doesn't support SSL
+        ssl_require=False,             # set False if your DB doesn't support SSL
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
     )
 }
