@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Your Assignments</h1>
+<p><a href="{% url 'join_classroom' %}">Join a classroom</a></p>
+<ul>
+    {% for a in assignments %}
+    <li><a href="{% url 'assignment_detail' a.pk %}">{{ a.title }}</a> — due {{ a.due_at|date:'M d, Y H:i' }}</li>
+    {% empty %}
+    <li>No assignments yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% block title %}My Classes{% endblock %}
+{% block content %}
+<h1>My Classes</h1>
+<p><a href="{% url 'create_classroom' %}">+ New class</a></p>
+
+
+<h2>Owned</h2>
+<ul>
+    {% for c in owned %}
+        <li>
+            <a href="{% url 'teacher_classroom' c.id %}">{{ c.name }}</a>
+            <small>(code: {{ c.code }})</small>
+        </li>
+    {% empty %}
+        <li>No classes yet.</li>
+    {% endfor %}
+</ul>
+
+
+{% if teaching %}
+<h2>Teaching (not owner)</h2>
+<ul>
+    {% for c in teaching %}
+        <li>
+            <a href="{% url 'teacher_classroom' c.id %}">{{ c.name }}</a>
+            <small>(code: {{ c.code }})</small>
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}s

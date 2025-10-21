@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="card">
+  <h2>{{ classroom.name }}</h2>
+  <p class="muted"><strong>Join code:</strong> {{ classroom.code }}</p>
+  <p><a href="{% url 'create_assignment' classroom.id %}" class="btn">+ Create Assignment</a></p>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h3>Students ({{ total_students }})</h3>
+    <ul>
+      {% for m in students %}
+        {% with u=m.user %}<li>{{ u.get_full_name|default:u.username }}</li>{% endwith %}
+      {% empty %}
+        <li class="muted">No students yet. Share the join code above.</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card">
+    <h3>Assignments</h3>
+    <ul>
+      {% for a in assignments %}
+        <li>
+          <a href="{% url 'teacher_assignment_detail' a.pk %}">{{ a.title }}</a>
+          {% if a.due_at %}<small class="muted"> — due {{ a.due_at|date:'M d, Y H:i' }}</small>{% endif %}
+          {% if not a.published %}<em class="muted">(unpublished)</em>{% endif %}
+          <div><small class="muted">{{ a.submitters }}/{{ total_students }} submitted</small></div>
+        </li>
+      {% empty %}
+        <li class="muted">No assignments yet.</li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'create_assignment' classroom.id %}" class="button">+ Create Assignment</a></p>
+  </section>
+</div>
+{% endblock %}

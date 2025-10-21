@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>{{ assignment.title }}</h2>
+
+{% if assignment.instructions %}
+  <div class="card">
+    <h3>Instructions</h3>
+    <div>{{ assignment.instructions|linebreaks }}</div>
+  </div>
+{% endif %}
+
+{% if assignment.article.url %}
+  <p><a href="{{ assignment.article.url }}" target="_blank">Open article</a></p>
+{% else %}
+  <article><pre style="white-space:pre-wrap">{{ assignment.article.body }}</pre></article>
+{% endif %}
+
+<form method="post" action="{% url 'submit_responses' assignment.pk %}">
+  {% csrf_token %}
+  {{ formset.management_form }}  {# IMPORTANT for formsets #}
+
+  {% for q, form in pairs %}
+    <fieldset>
+      <legend>Q{{ forloop.counter }}. {{ q.prompt }}</legend>
+      {{ form.as_p }}
+    </fieldset>
+  {% endfor %}
+
+  <button type="submit">Submit</button>
+</form>
+{% endblock %}

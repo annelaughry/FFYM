@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>{{ assignment.title }} — Submissions</h2>
+{% for student, rows in data.items %}
+    <h3>{{ student.get_full_name|default:student.username }}</h3>
+    <ol>
+    {% for q, resp, fb in rows %}
+        <li>
+            <p><strong>Q:</strong> {{ q.prompt }}</p>
+            <p><strong>A:</strong> {{ resp.answer }}</p>
+            {% if fb %}
+                <p><strong>Feedback:</strong> {{ fb.comment }}{% if fb.score %} ({{ fb.score }}){% endif %}</p>
+            {% else %}
+                <p><a href="{% url 'review_response' resp.id %}">Add feedback</a></p>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ol>
+{% empty %}
+    <p>No responses yet.</p>
+{% endfor %}
+{% endblock %}

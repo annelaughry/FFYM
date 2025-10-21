@@ -1,0 +1,8 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Join Classroom</h2>
+<form method="post">{% csrf_token %}
+    <label>Class Code <input name="code" required></label>
+    <button type="submit">Join</button>
+</form>
+{% endblock %}

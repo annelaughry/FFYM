@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+{% block title %}New Assignment{% endblock %}
+{% block content %}
+<h1>Create Assignment for {{ classroom.name }}</h1>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+</form>
+<p><a href="{% url 'teacher_classroom' classroom.id %}">← Back to class</a></p>
+{% endblock %}
