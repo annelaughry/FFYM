@@ -4,35 +4,38 @@
 <h1>Dashboard</h1>
 
 {# TEACHER SECTION #}
-{% if teacher_classrooms %}
-  <section class="card">
-    <h2>Your Classes (Teacher)</h2>
-    <ul>
-      {% for c in teacher_classrooms %}
-        <li>
-          <a href="{% url 'teacher_classroom' c.id %}">{{ c.name }}</a>
-          <small class="muted">(code: {{ c.code }})</small>
-        </li>
-      {% endfor %}
-    </ul>
-    <p><a href="{% url 'create_classroom' %}" class="btn">+ Create Class</a></p>
-  </section>
-{% endif %}
+
+<div class="dashboard-sections">
+    {% if teacher_classrooms %}
+    <section class="card">
+        <h2>Your Classes (Teacher)</h2>
+        <ul>
+        {% for c in teacher_classrooms %}
+            <li>
+            <a href="{% url 'teacher_classroom' c.id %}">{{ c.name }}</a>
+            <small class="muted">(code: {{ c.code }})</small>
+            </li>
+        {% endfor %}
+        </ul>
+        <p><a href="{% url 'create_classroom' %}" class="btn">+ Create Class</a></p>
+    </section>
+    {% endif %}
 
 {# STUDENT SECTION: CLASSES #}
-<section class="card">
-  <h2>Your Classes (Student)</h2>
-  {% if student_classrooms %}
-    <ul>
-      {% for c in student_classrooms %}
-        <li>{{ c.name }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="muted">You haven’t joined any classes yet.</p>
-  {% endif %}
-  <p><a href="{% url 'join_classroom' %}" class="btn">Join a Class</a></p>
-</section>
+    <section class="card">
+        <h2>Your Classes (Student)</h2>
+        {% if student_classrooms %}
+            <ul>
+            {% for c in student_classrooms %}
+                <li>{{ c.name }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">You haven’t joined any classes yet.</p>
+        {% endif %}
+        <p><a href="{% url 'join_classroom' %}" class="btn">Join a Class</a></p>
+    </section>
+</div>
 
 {# STUDENT SECTION: UPCOMING ASSIGNMENTS #}
 <section class="card">
