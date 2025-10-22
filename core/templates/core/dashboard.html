@@ -1,13 +1,60 @@
 {% extends 'core/base.html' %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1>Your Assignments</h1>
-<p><a href="{% url 'join_classroom' %}">Join a classroom</a></p>
-<ul>
-    {% for a in assignments %}
-    <li><a href="{% url 'assignment_detail' a.pk %}">{{ a.title }}</a> — due {{ a.due_at|date:'M d, Y H:i' }}</li>
-    {% empty %}
-    <li>No assignments yet.</li>
-    {% endfor %}
-</ul>
+<h1>Dashboard</h1>
+
+{# TEACHER SECTION #}
+{% if teacher_classrooms %}
+  <section class="card">
+    <h2>Your Classes (Teacher)</h2>
+    <ul>
+      {% for c in teacher_classrooms %}
+        <li>
+          <a href="{% url 'teacher_classroom' c.id %}">{{ c.name }}</a>
+          <small class="muted">(code: {{ c.code }})</small>
+        </li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'create_classroom' %}" class="btn">+ Create Class</a></p>
+  </section>
+{% endif %}
+
+{# STUDENT SECTION: CLASSES #}
+<section class="card">
+  <h2>Your Classes (Student)</h2>
+  {% if student_classrooms %}
+    <ul>
+      {% for c in student_classrooms %}
+        <li>{{ c.name }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">You haven’t joined any classes yet.</p>
+  {% endif %}
+  <p><a href="{% url 'join_classroom' %}" class="btn">Join a Class</a></p>
+</section>
+
+{# STUDENT SECTION: UPCOMING ASSIGNMENTS #}
+<section class="card">
+  <h2>Upcoming Assignments</h2>
+  {% if upcoming_assignments %}
+    <ul>
+      {% for a in upcoming_assignments %}
+        <li>
+          <a href="{% url 'assignment_detail' a.pk %}">{{ a.title }}</a>
+          <small class="muted">
+            — {{ a.classroom.name }}
+            {% if a.due_at %}
+              · due {{ a.due_at|date:'M d, Y H:i' }}
+            {% endif %}
+          </small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">No upcoming assignments.</p>
+  {% endif %}
+  <p><a href="{% url 'my_feedback' %}" class="btn">View All Feedback</a></p>
+</section>
+
 {% endblock %}
