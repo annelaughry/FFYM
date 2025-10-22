@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.forms import formset_factory
-from django.db import transaction
+from django.db import transaction, models
 from .models import Classroom, Membership, Assignment, Question, StudentResponse, Feedback
 from .forms import ResponseForm, FeedbackForm, UserRegisterForm, ClassroomForm, AssignmentForm, QuestionFormSet
 from django.contrib.auth import login
@@ -10,19 +10,70 @@ import random, string
 from django.db.models import Count
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
 
+
+User = get_user_model()
 
 def is_teacher(user, classroom):
     return Membership.objects.filter(user=user, classroom=classroom, role='teacher').exists()
 
+def is_user_teacher(user) -> bool:
+    # Treat “teacher” as anyone who owns at least one classroom OR
+    # has any teacher membership.
+    return (
+        Classroom.objects.filter(owner=user).exists() or
+        Membership.objects.filter(user=user, role='teacher').exists()
+    )
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.utils import timezone
+from datetime import timedelta
+from django.db import models
+from .models import Classroom, Membership, Assignment
 
 @login_required
 def dashboard(request):
-    mships = Membership.objects.filter(user=request.user)
-    classrooms = [m.classroom for m in mships]
-    student_assignments = Assignment.objects.filter(classroom__in=classrooms, published=True)
-    return render(request, 'core/dashboard.html', {'assignments': student_assignments, 'classrooms': classrooms})
+    """
+    Role-aware dashboard:
+    - Teachers see the classes they own or teach.
+    - Students see the classes they've joined and any upcoming assignments.
+    """
+    # All memberships for this user
+    memberships = Membership.objects.filter(user=request.user).select_related('classroom')
+
+    # Separate classrooms by role
+    teacher_classrooms = [m.classroom for m in memberships if m.role == 'teacher']
+    student_classrooms = [m.classroom for m in memberships if m.role == 'student']
+
+    # Include classrooms the user owns (teacher by ownership)
+    owned = Classroom.objects.filter(owner=request.user)
+    for c in owned:
+        if c not in teacher_classrooms:
+            teacher_classrooms.append(c)
+
+    # --- Upcoming assignments for students ---
+    now = timezone.now()
+    in_30d = now + timedelta(days=30)
+
+    # Upcoming: published + not yet due (or no due date)
+    upcoming = Assignment.objects.filter(
+        classroom__in=student_classrooms,
+        published=True
+    ).filter(
+        models.Q(due_at__isnull=True) | models.Q(due_at__gte=now)
+    ).order_by('due_at', 'title')
+
+    # Context passed to dashboard and base.html (for nav visibility)
+    context = {
+        'teacher_classrooms': teacher_classrooms,
+        'student_classrooms': student_classrooms,
+        'upcoming_assignments': upcoming,
+    }
+
+    return render(request, 'core/dashboard.html', context)
+
 
 
 @login_required
@@ -176,17 +227,18 @@ def _rand_code(n=6):
 
 @login_required
 def my_classrooms(request):
-    """Classes I own or where I'm a teacher."""
+    if not is_user_teacher(request.user):
+        return redirect('dashboard')  # students can’t view teacher-only list
     owned = Classroom.objects.filter(owner=request.user)
-    teaching_ids = Membership.objects.filter(user=request.user, role='teacher').values_list('classroom_id', flat=True)
+    teaching_ids = Membership.objects.filter(user=request.user, role='teacher') \
+                                     .values_list('classroom_id', flat=True)
     teaching = Classroom.objects.filter(id__in=teaching_ids).exclude(owner=request.user)
     return render(request, 'core/teacher_classrooms_list.html', {"owned": owned, "teaching": teaching})
 
 @login_required
 def create_classroom(request):
-    """Teachers can create a new classroom; sets owner and adds teacher membership."""
-    # Only allow if user is a teacher somewhere OR choose to allow anyone to create
-    # Simpler policy: anyone can create; owner implies teacher.
+    if not is_user_teacher(request.user):
+        return redirect('dashboard') 
     if request.method == 'POST':
         form = ClassroomForm(request.POST)
         if form.is_valid():
