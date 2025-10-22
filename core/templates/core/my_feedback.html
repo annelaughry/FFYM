@@ -14,7 +14,7 @@
         <p><strong>Question:</strong> {{ r.question.prompt }}</p>
         <p><strong>Your Answer:</strong> {{ r.answer }}</p>
 
-        <div style="background:#f8f8ff; border-left:4px solid var(--accent3,#bbbdf6); padding:.75rem; margin-top:.5rem;">
+        <div style="background:#ee4266; border-left:4px solid var(--accent3,#bbbdf6); padding:.75rem; margin-top:.5rem;">
           <p><strong>Teacher Feedback:</strong> {{ r.feedback.comment|default:"No feedback yet." }}</p>
           {% if r.feedback.score is not None %}
             <p><strong>Score:</strong> {{ r.feedback.score }}</p>
