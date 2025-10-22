@@ -1,13 +1,35 @@
 {% extends 'core/base.html' %}
 {% block title %}My Feedback{% endblock %}
+
 {% block content %}
 <h1>My Feedback</h1>
+
 {% if items %}
-    <ul>
-        {% for r in items %}
-            <li class="card">
-                <div><strong>{{ r.assignment.title }}</strong> <small class="muted">· {{ r.assignment.classroom.name }}</small></div>
-                <div><em>Q:</em> {{ r.question.prompt }}</div>
-                <div><em>Your answer:</em> {{ r.answer }}</div>
-                <div><em>Feedback:</em> {{ r.feedback.comment|default:"—" }} {% if r.feedback.score is not None %} <strong>(Score: {{ r.feedback.score }})</strong>{% endif %}</div>
-                <small class="muted">Submitted {{ r.submitted_at|date:'M d, Y H:i'
+  <ul style="list-style:none; padding:0;">
+    {% for r in items %}
+      <li class="card" style="margin-bottom:1rem; padding:1rem;">
+        <h3>{{ r.assignment.title }}</h3>
+        <p class="muted">{{ r.assignment.classroom.name }}</p>
+
+        <p><strong>Question:</strong> {{ r.question.prompt }}</p>
+        <p><strong>Your Answer:</strong> {{ r.answer }}</p>
+
+        <div style="background:#f8f8ff; border-left:4px solid var(--accent3,#bbbdf6); padding:.75rem; margin-top:.5rem;">
+          <p><strong>Teacher Feedback:</strong> {{ r.feedback.comment|default:"No feedback yet." }}</p>
+          {% if r.feedback.score is not None %}
+            <p><strong>Score:</strong> {{ r.feedback.score }}</p>
+          {% endif %}
+          <small class="muted">
+            Submitted: {{ r.submitted_at|date:"M d, Y H:i" }} |
+            Feedback Updated: {{ r.feedback.updated_at|date:"M d, Y H:i" }}
+          </small>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="muted">You haven’t received any feedback yet.</p>
+{% endif %}
+
+<p><a href="{% url 'dashboard' %}" class="btn">← Back to Dashboard</a></p>
+{% endblock %}
