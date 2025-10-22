@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'readingGuide.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+'''
 DATABASES = {
     "default": dj_database_url.config(
         env="DATABASE_URL",
@@ -88,6 +88,24 @@ DATABASES = {
         ssl_require=False,             # set False if your DB doesn't support SSL
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
     )
+}
+'''
+# PostgreSQL
+
+from urllib.parse import urlparse
+DATABASE_URL = os.environ.get('DATABASE_URL')
+db_info = urlparse(DATABASE_URL)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'db',
+        'USER': db_info.username,
+        'PASSWORD': db_info.password,
+        'HOST': db_info.hostname,
+        'PORT': db_info.port,
+        'OPTIONS': {'sslmode': 'require'},
+    }
 }
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
