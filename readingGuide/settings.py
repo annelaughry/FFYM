@@ -24,11 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Take environment variables from .env file  
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  
 
-SECRET_KEY = env("SECRET_KEY", default="change_me")  
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = env("DEBUG", default=False)  
+DEBUG = False
 
-ALLOWED_HOSTS = ["ysaone.applikuapp.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definitions
@@ -133,8 +133,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = env.str("STATIC_URL", default="/static/")  
-STATIC_ROOT = env.str("STATIC_ROOT", default=BASE_DIR / "staticfiles")   # where collectstatic will gather files (prod)
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATIC_DIRS = [BASE_DIR / 'static']
+
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG
 
