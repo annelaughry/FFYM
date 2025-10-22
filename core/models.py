@@ -32,9 +32,10 @@ class Article(models.Model):
 
 class Assignment(models.Model):
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name='assignments')
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, blank=True)  # temporarily optional
     title = models.CharField(max_length=200)
     instructions = models.TextField(blank=True)
+    link = models.URLField(blank=True)  # ← NEW, not required
     due_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(default=False)
     def __str__(self):

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.forms import modelform_factory
-from .models import StudentResponse, Feedback, Membership, Classroom, Assignment
+from django.forms import modelform_factory, inlineformset_factory
+from .models import StudentResponse, Feedback, Membership, Classroom, Assignment, Question
 
 
 ResponseForm = modelform_factory(StudentResponse, fields=['answer'])
@@ -33,8 +33,16 @@ class ClassroomForm(forms.ModelForm):
 class AssignmentForm(forms.ModelForm):
     class Meta:
         model = Assignment
-        fields = ['title', 'article', 'instructions','due_at', 'published']
+        fields = ['title', 'link', 'instructions', 'due_at', 'published']
         widgets = {
-            'instructions': forms.Textarea,
             'due_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'instructions': forms.Textarea(attrs={'rows': 5}),
+            'link': forms.URLInput(attrs={'placeholder': 'https://example.com/reading'}),
         }
+
+QuestionFormSet = inlineformset_factory(
+    Assignment, Question,
+    fields=['prompt', 'order'],
+    extra=3,           # show 3 blanks by default
+    can_delete=True
+)

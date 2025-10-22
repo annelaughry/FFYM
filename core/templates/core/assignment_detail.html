@@ -9,11 +9,10 @@
   </div>
 {% endif %}
 
-{% if assignment.article.url %}
-  <p><a href="{{ assignment.article.url }}" target="_blank">Open article</a></p>
-{% else %}
-  <article><pre style="white-space:pre-wrap">{{ assignment.article.body }}</pre></article>
+{% if assignment.link %}
+  <p><a href="{{ assignment.link }}" target="_blank">Open link</a></p>
 {% endif %}
+
 
 <form method="post" action="{% url 'submit_responses' assignment.pk %}">
   {% csrf_token %}

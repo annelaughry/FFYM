@@ -3,12 +3,13 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.forms import formset_factory
 from django.db import transaction
 from .models import Classroom, Membership, Assignment, Question, StudentResponse, Feedback
-from .forms import ResponseForm, FeedbackForm, UserRegisterForm, ClassroomForm, AssignmentForm
+from .forms import ResponseForm, FeedbackForm, UserRegisterForm, ClassroomForm, AssignmentForm, QuestionFormSet
 from django.contrib.auth import login
 from django.http import HttpResponseForbidden
 import random, string
 from django.db.models import Count
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -62,15 +63,20 @@ def submit_responses(request, pk):
         formset = ResponseFormSet(request.POST)
         if formset.is_valid():
             for form, question in zip(formset, questions):
-                obj, _ = StudentResponse.objects.get_or_create(
+                obj, created = StudentResponse.objects.get_or_create(
                     assignment=assignment, question=question, student=request.user,
-                    defaults={'answer': form.cleaned_data['answer']}
+                    defaults={'answer': form.cleaned_data.get('answer', '')}
                 )
-                if not _:
-                    obj.answer = form.cleaned_data['answer']
+                if not created:
+                    obj.answer = form.cleaned_data.get('answer', '')
                     obj.save()
-            return redirect('assignment_detail', pk=assignment.pk)
+            return redirect('assignment_submitted', pk=assignment.pk)
     return redirect('assignment_detail', pk=assignment.pk)
+
+@login_required
+def assignment_submitted(request, pk):
+    assignment = get_object_or_404(Assignment, pk=pk)
+    return render(request, 'core/assignment_submitted.html', {'assignment': assignment})
 
 # Teacher views
 @login_required
@@ -205,14 +211,42 @@ def create_assignment(request, class_id):
     if not is_teacher(request.user, classroom) and request.user != classroom.owner:
         return redirect('dashboard')
 
+    assignment = Assignment(classroom=classroom)
+
     if request.method == 'POST':
-        form = AssignmentForm(request.POST)
-        if form.is_valid():
-            assignment = form.save(commit=False)
-            assignment.classroom = classroom
-            assignment.save()
+        form = AssignmentForm(request.POST, instance=assignment)
+        formset = QuestionFormSet(request.POST, instance=assignment)
+        if form.is_valid() and formset.is_valid():
+            assignment = form.save()
+            formset.instance = assignment
+            formset.save()
             return redirect('teacher_classroom', class_id=classroom.id)
     else:
-        form = AssignmentForm()
+        form = AssignmentForm(instance=assignment)
+        formset = QuestionFormSet(instance=assignment)
 
-    return render(request, 'core/assignment_form.html', {'form': form, 'classroom': classroom})
+    return render(request, 'core/assignment_form.html', {
+        'form': form, 'formset': formset, 'classroom': classroom
+    })
+
+@login_required
+def edit_assignment(request, pk):
+    assignment = get_object_or_404(Assignment, pk=pk)
+    classroom = assignment.classroom
+    if not is_teacher(request.user, classroom) and request.user != classroom.owner:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST, instance=assignment)
+        formset = QuestionFormSet(request.POST, instance=assignment)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect('teacher_classroom', class_id=classroom.id)
+    else:
+        form = AssignmentForm(instance=assignment)
+        formset = QuestionFormSet(instance=assignment)
+
+    return render(request, 'core/assignment_form.html', {
+        'form': form, 'formset': formset, 'classroom': classroom, 'assignment': assignment
+    })
