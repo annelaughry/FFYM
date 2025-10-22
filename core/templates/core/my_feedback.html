@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block title %}My Feedback{% endblock %}
+{% block content %}
+<h1>My Feedback</h1>
+{% if items %}
+    <ul>
+        {% for r in items %}
+            <li class="card">
+                <div><strong>{{ r.assignment.title }}</strong> <small class="muted">· {{ r.assignment.classroom.name }}</small></div>
+                <div><em>Q:</em> {{ r.question.prompt }}</div>
+                <div><em>Your answer:</em> {{ r.answer }}</div>
+                <div><em>Feedback:</em> {{ r.feedback.comment|default:"—" }} {% if r.feedback.score is not None %} <strong>(Score: {{ r.feedback.score }})</strong>{% endif %}</div>
+                <small class="muted">Submitted {{ r.submitted_at|date:'M d, Y H:i'

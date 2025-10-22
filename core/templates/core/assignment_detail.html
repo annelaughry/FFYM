@@ -18,12 +18,23 @@
   {% csrf_token %}
   {{ formset.management_form }}  {# IMPORTANT for formsets #}
 
-  {% for q, form in pairs %}
-    <fieldset>
-      <legend>Q{{ forloop.counter }}. {{ q.prompt }}</legend>
-      {{ form.as_p }}
+  {% for q, form, resp, fb in pairs %}
+    <fieldset class="card">
+        <legend>Q{{ forloop.counter }}. {{ q.prompt }}</legend>
+        {{ form.as_p }}
+
+
+        {% if fb %}
+            <div class="card" style="background: rgba(187,189,246,.12); border-left: 4px solid var(--accent3); margin-top:.5rem;">
+                <p><strong>Teacher feedback:</strong> {{ fb.comment|default:"—" }}</p>
+                {% if fb.score is not None %}
+                    <p><strong>Score:</strong> {{ fb.score }}</p>
+                {% endif %}
+                <small class="muted">Last updated {{ fb.updated_at|date:'M d, Y H:i' }}</small>
+            </div>
+        {% endif %}
     </fieldset>
-  {% endfor %}
+{% endfor %}
 
   <button type="submit">Submit</button>
 </form>

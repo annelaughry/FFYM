@@ -86,23 +86,42 @@ def join_classroom(request):
     return render(request, 'core/join_classroom.html')
 
 @login_required
+@login_required
 def assignment_detail(request, pk):
     assignment = get_object_or_404(Assignment, pk=pk, published=True)
+    # Pull the student's responses (+ feedback) for this assignment
+    responses_qs = (StudentResponse.objects
+                    .filter(assignment=assignment, student=request.user)
+                    .select_related('question')
+                    .select_related('feedback'))
+
+
+    responses_by_qid = {r.question_id: r for r in responses_qs}
+
+
     questions = list(assignment.questions.all())
-    existing = {
-        r.question_id: r
-        for r in StudentResponse.objects.filter(assignment=assignment, student=request.user)
-    }
-    initial = [{'answer': existing.get(q.id).answer if existing.get(q.id) else ''} for q in questions]
+
+
+    # Pre-fill the formset with existing answers (editable unless you lock it)
+    initial = [{'answer': responses_by_qid.get(q.id).answer if responses_by_qid.get(q.id) else ''}
+    for q in questions]
     ResponseFormSet = formset_factory(ResponseForm, extra=0)
     formset = ResponseFormSet(initial=initial)
-    pairs = list(zip(questions, formset.forms))
+
+
+    # Pair questions with forms and existing response+feedback (for display)
+    pairs = []
+    for q, form in zip(questions, formset.forms):
+        resp = responses_by_qid.get(q.id)
+        fb = getattr(resp, 'feedback', None) if resp else None
+        pairs.append((q, form, resp, fb))
+
+
     return render(request, 'core/assignment_detail.html', {
         'assignment': assignment,
         'formset': formset,
         'pairs': pairs,
     })
-
 
 @login_required
 @transaction.atomic
@@ -302,3 +321,12 @@ def edit_assignment(request, pk):
     return render(request, 'core/assignment_form.html', {
         'form': form, 'formset': formset, 'classroom': classroom, 'assignment': assignment
     })
+
+@login_required
+def my_feedback(request):
+    # All of this user's responses that have feedback
+    items = (StudentResponse.objects
+            .filter(student=request.user, feedback__isnull=False)
+            .select_related('assignment', 'assignment__classroom', 'question', 'feedback')
+            .order_by('-submitted_at', 'assignment__title', 'question__order'))
+    return render(request, 'core/my_feedback.html', {'items': items})
