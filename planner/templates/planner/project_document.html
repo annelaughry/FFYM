@@ -1,0 +1,105 @@
+{% extends "planner/base.html" %}
+{% block content %}
+<style>
+.doc-card { max-width: 900px; margin: 0 auto; }
+.doc-card h2 { border-bottom: 2px solid #eee; padding-bottom: .25rem; margin-top: 1.5rem; }
+.doc-muted { color: #6c757d; }
+.doc-pre { white-space: pre-wrap; }
+</style>
+<div class="doc-card">
+  <h1>{{ project.title }}</h1>
+  <p class="doc-muted">Owner: {{ project.owner.get_full_name|default:project.owner.username }} · Updated: {{ project.updated_at }}</p>
+
+  <h2>Background Research</h2>
+  {% if bg %}
+    {% if bg.topic %}
+      <p><strong>Research Topic:</strong> {{ bg.topic }}</p>
+    {% endif %}
+
+    {% if bg.big_picture %}
+      <p><strong>Big Picture</strong></p>
+      <div class="doc-pre">{{ bg.big_picture }}</div>
+    {% endif %}
+
+    {% if bg.prior_findings %}
+      <p><strong>Prior Findings</strong></p>
+      <div class="doc-pre">{{ bg.prior_findings }}</div>
+    {% endif %}
+
+    {% if bg.key_terms %}
+      <p><strong>Key Terms</strong></p>
+      <div class="doc-pre">{{ bg.key_terms }}</div>
+    {% endif %}
+
+    {% if bg.term_definitions %}
+      <p><strong>Term Definitions</strong></p>
+      <div class="doc-pre">{{ bg.term_definitions }}</div>
+    {% endif %}
+
+    {% if bg.current_events %}
+      <p><strong>Current Events / Case Studies</strong></p>
+      <div class="doc-pre">{{ bg.current_events }}</div>
+    {% endif %}
+
+    {% if bg.real_world %}
+      <p><strong>Real-World Impact</strong></p>
+      <div class="doc-pre">{{ bg.real_world }}</div>
+    {% endif %}
+
+    {% if bg.sources %}
+      <p><strong>Sources</strong></p>
+      <div class="doc-pre">{{ bg.sources }}</div>
+    {% endif %}
+  {% else %}
+    <p class="doc-muted">No background research saved yet.</p>
+  {% endif %}
+</div>
+
+<h2>Research Question Development</h2>
+{% if rq %}
+  {% if rq.final_question %}
+    <p><strong>Final Research Question(s)</strong></p>
+    <div class="doc-pre">{{ rq.final_question }}</div>
+  {% endif %}
+
+  {% if rq.problem_statement %}
+    <p><strong>Problem Statement</strong></p>
+    <div class="doc-pre">{{ rq.problem_statement }}</div>
+  {% endif %}
+
+  {% if rq.question_brainstorm %}
+    <p><strong>Question Brainstorm</strong></p>
+    <div class="doc-pre">{{ rq.question_brainstorm }}</div>
+  {% endif %}
+
+  {% if rq.so_what %}
+    <p><strong>So What?</strong></p>
+    <div class="doc-pre">{{ rq.so_what }}</div>
+  {% endif %}
+
+  {% if rq.evaluate %}
+    <p><strong>Evaluate</strong></p>
+    <div class="doc-pre">{{ rq.evaluate }}</div>
+  {% endif %}
+{% else %}
+  <p class="doc-muted">No research question section saved yet.</p>
+{% endif %}
+
+<h2>Hypothesis</h2>
+{% if hyp %}
+  {% if hyp.independent_variable %}
+    <p><strong>Independent Variable:</strong> {{ hyp.independent_variable }}</p>
+  {% endif %}
+  {% if hyp.dependent_variable %}
+    <p><strong>Dependent Variable:</strong> {{ hyp.dependent_variable }}</p>
+  {% endif %}
+  {% if hyp.hypothesis %}
+    <p><strong>Hypothesis:</strong></p>
+    <div class="doc-pre">{{ hyp.hypothesis }}</div>
+  {% endif %}
+{% else %}
+  <p class="doc-muted">No hypothesis saved yet.</p>
+{% endif %}
+
+
+{% endblock %}

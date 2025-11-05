@@ -1,0 +1,23 @@
+{% extends "planner/base.html" %}
+{% block content %}
+<div class="container text-center" style="max-width:760px">
+  <h1 class="mb-3">YSA Project Planner</h1>
+  <p class="text-muted">Plan your research project step-by-step and keep everything in one place.</p>
+
+  {% if project %}
+    <div class="card my-4">
+      <div class="card-body">
+        <h5 class="card-title">Active Project</h5>
+        <p class="mb-1"><strong>{{ project.title }}</strong></p>
+        {% if project.members.all %}
+          <p class="text-muted small">Team: {{ project.members.all|join:", " }}</p>
+        {% endif %}
+        <a class="btn btn-primary" href="{% url 'planner:background_research_edit' %}">Continue: Background Research →</a>
+      </div>
+    </div>
+    <p class="text-muted">or start a new one</p>
+  {% endif %}
+
+  <a class="btn btn-success btn-lg" href="{% url 'planner:start_project' %}">Start a project</a>
+</div>
+{% endblock %}

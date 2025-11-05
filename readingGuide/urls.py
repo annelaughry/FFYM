@@ -22,4 +22,6 @@ urlpatterns = [
 path('admin/', admin.site.urls),
 path('accounts/', include('django.contrib.auth.urls')), # login/logout/password
 path('', include('core.urls')),
+path('planner/', include(('planner.urls', 'planner'), namespace='planner')),
+
 ]

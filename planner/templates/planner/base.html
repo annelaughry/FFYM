@@ -1,0 +1,42 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Project Planner{% endblock %}
+
+{% block header %}
+<header>
+  <nav class="nav-links card" style="display: flex; justify-content: space-between; align-items: center;">
+    
+    <!-- Left side links -->
+    <div class="nav-left">
+      <a href="{% url 'planner:home' %}" class="btn">Project Planner Home</a>
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'planner:background_research_edit' %}" class="btn">Background Research</a>
+        <a href="{% url 'planner:research_questions_edit' %}" class="btn">Research Questions</a>
+        <a href="{% url 'planner:hypothesis_edit' %}" class="btn">Hypothesis</a>
+        <a href="{% url 'dashboard' %}" class="btn">Back to Class Dashboard</a>
+      {% endif %}
+    </div>
+
+
+    <div class="nav-right">
+      {% if user.is_authenticated %}
+        <a href="/admin/" class="btn" style="background-color:#bbbdf6; color:white;">Admin</a>
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button class="btn" style="background-color:#bbbdf6; color:white;">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn" style="background-color:#bbbdf6; color:white;">Login</a>
+      {% endif %}
+    </div>
+
+  </nav>
+</header>
+{% endblock %}
+
+{% block content %}
+  {% block planner_content %}{% endblock %}
+{% endblock %}
+

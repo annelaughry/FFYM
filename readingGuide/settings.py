@@ -11,24 +11,24 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url
-import environ
 import os
+import environ
+import dj_database_url
 
-env = environ.Env(  
-    # set casting, default value  
-    DEBUG=(bool, False)  
-)  
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-BASE_DIR = Path(__file__).resolve().parent.parent  
-# Take environment variables from .env file  
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  # loads local .env in dev
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = env("SECRET_KEY", default=os.environ.get("SECRET_KEY"))
+DEBUG = env.bool("DEBUG", default=False)
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["ysa-one-6n8us.ondigitalocean.app"])
 
-DEBUG = False
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=["https://ysa-one-6n8us.ondigitalocean.app"]
+)
 
-ALLOWED_HOSTS = ["ysa-one-6n8us.ondigitalocean.app"]
 
 
 # Application definitions
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'planner',
 ]
 
 LOGIN_REDIRECT_URL = 'dashboard'
@@ -92,22 +93,20 @@ DATABASES = {
 '''
 # PostgreSQL
 
-from urllib.parse import urlparse
-DATABASE_URL = os.environ.get('DATABASE_URL')
-db_info = urlparse(DATABASE_URL)
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db',
-        'USER': db_info.username,
-        'PASSWORD': db_info.password,
-        'HOST': db_info.hostname,
-        'PORT': db_info.port,
-        'OPTIONS': {'sslmode': 'require'},
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
+DATABASE_URL = env("DATABASE_URL", default=None)
+if DATABASE_URL:
+    DATABASES["default"] = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=True,   # ok for DO managed DB; drop if your DB doesn’t need SSL
+    )
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 LOGGING = {  
@@ -151,11 +150,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# Optional but nice in prod:
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG

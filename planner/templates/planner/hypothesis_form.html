@@ -1,0 +1,60 @@
+{% extends "planner/base.html" %}
+{% block content %}
+<div class="container" style="max-width:900px">
+  <h1>Form Your Hypothesis</h1>
+  <p class="text-muted">
+    Based on your research question, identify your variables and state your hypothesis.
+  </p>
+
+  <h2> What is a Hypothesis?</h2>
+  <p>A hypothesis is a clear statement that can be confimed through a test or experiment.<br> It should be well reasoned and rooted in factual information from backround research.</p>
+  <h5> A Hypothesis is not:</h5>
+    <ul>
+        <li>A guess</li>
+        <li>An opinion</li>
+        <li>A prediction</li>
+    </ul>
+   <h2> How to Form Your Hypothesis</h2>
+   <p>The most straightforward method is to idenfify your independent and dependent variables and create an "if/then statement." As you become more comfortable forming hypotheses, your statements can take differnt form, but should still include the expected effect of the independent variable on the dependent.</p>
+        <h5>Example:</h5>
+        <ul> 
+            <li> Research Question: How does the amount of nitrogen in soil effect how fast a plant grows?</li>
+            <li> Independent variable: The amout of nitogen in the soil.</li>
+            <li> Dependent Variable: Plant growth rate.</li>
+            <li>Hypothesis: <strong>If</strong> a soil sample has a higher amount of nitrogen, <strong>then</strong> plants will grow faster.</li>
+        </ul>
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Independent Variable</label>
+      {{ form.independent_variable }}
+      {% if form.independent_variable.help_text %}
+        <div class="form-text">{{ form.independent_variable.help_text }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Dependent Variable</label>
+      {{ form.dependent_variable }}
+      {% if form.dependent_variable.help_text %}
+        <div class="form-text">{{ form.dependent_variable.help_text }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Hypothesis</label>
+      {{ form.hypothesis }}
+      {% if form.hypothesis.help_text %}
+        <div class="form-text">{{ form.hypothesis.help_text }}</div>
+      {% endif %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'planner:research_questions_edit' %}" class="btn btn-outline-secondary ms-2">Back</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "planner/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container" style="max-width:900px">
+  <h1>Background Research</h1>
+  <p class="text-muted">All answers save into your project and are compiled into a single document for admins.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Research Topic</label>
+      {{ form.topic }}
+      {% if form.topic.errors %}
+        <div class="text-danger small">{{ form.topic.errors }}</div>
+      {% endif %}
+      {% if form.topic.help_text %}<div class="form-text">{{ form.topic.help_text }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Big Picture</label>
+      {{ form.big_picture }}
+      {% if form.big_picture.errors %}
+        <div class="text-danger small">{{ form.big_picture.errors }}</div>
+      {% endif %}
+      {% if form.big_picture.help_text %}<div class="form-text">{{ form.big_picture.help_text }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Prior Findings</label>
+      {{ form.prior_findings }}
+      {% if form.prior_findings.help_text %}<div class="form-text">{{ form.prior_findings.help_text }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Key Terms</label>
+      {{ form.key_terms }}
+      {% if form.key_terms.help_text %}<div class="form-text">{{ form.key_terms.help_text }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Term Definitions</label>
+      {{ form.term_definitions }}
+      {% if form.term_definitions.help_text %}<div class="form-text">{{ form.term_definitions.help_text }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Current Events / Case Studies</label>
+      {{ form.current_events }}
+      {% if form.current_events.help_text %}<div class="form-text">{{ form.current_events.help_text }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Real-World Impact</label>
+      {{ form.real_world }}
+      {% if form.real_world.help_text %}<div class="form-text">{{ form.real_world.help_text }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Sources / Citations</label>
+      {{ form.sources }}
+      {% if form.sources.help_text %}<div class="form-text">{{ form.sources.help_text }}</div>{% endif %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'planner:research_questions_edit' %}" class="btn btn-outline-secondary ms-2">Next</a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
+

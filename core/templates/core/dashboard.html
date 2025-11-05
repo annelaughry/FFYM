@@ -22,20 +22,22 @@
     {% endif %}
 
 {# STUDENT SECTION: CLASSES #}
-    <section class="card">
-        <h2>Your Classes (Student)</h2>
-        {% if student_classrooms %}
-            <ul>
-            {% for c in student_classrooms %}
-                <li>{{ c.name }}</li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p class="muted">You haven’t joined any classes yet.</p>
-        {% endif %}
-        <p><a href="{% url 'join_classroom' %}" class="btn">Join a Class</a></p>
-    </section>
-</div>
+<section class="card">
+  <h2>Your Classes (Student)</h2>
+  {% if student_classrooms %}
+    <ul>
+      {% for c in student_classrooms %}
+        <li>{{ c.name }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">You haven’t joined any classes yet.</p>
+  {% endif %}
+
+  <p>
+    <a href="{% url 'join_classroom' %}" class="btn" style="margin-right:.5rem;">Join a Class</a>
+  </p>
+</section>
 
 {# STUDENT SECTION: UPCOMING ASSIGNMENTS #}
 <section class="card">
@@ -59,5 +61,10 @@
   {% endif %}
   <p><a href="{% url 'my_feedback' %}" class="btn">View All Feedback</a></p>
 </section>
+</div>
+
+<div style="text-align: center;">
+  <p><a href="{% url 'planner:home' %}" class="btn">Navigate to the Project Planner</a></p>
+</div>
 
 {% endblock %}

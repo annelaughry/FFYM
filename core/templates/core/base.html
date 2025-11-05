@@ -8,25 +8,24 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
   </head>
   <body>
-    <header>
-      <nav class="nav-links card">
-        <a href="/">Dashboard</a>
-
-        {% if user.is_authenticated %}
-          {# Show My Classes only if user is a teacher #}
-          {% if teacher_classrooms %}
-            <a href="{% url 'my_classrooms' %}">My Classes</a>
-          {% endif %}
-
-          <form action="{% url 'logout' %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button class="btn">Logout</button>
-          </form>
-        {% else %}
-          <a href="{% url 'login' %}">Login</a>
-        {% endif %}
-      </nav>
-    </header>
+{% block header %}
+<header>
+  <nav class="nav-links card">
+    <a href="/">Dashboard</a>
+    {% if user.is_authenticated %}
+      {% if teacher_classrooms %}
+        <a href="{% url 'my_classrooms' %}">My Classes</a>
+      {% endif %}
+      <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button class="btn">Logout</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+  </nav>
+</header>
+{% endblock %}
 
     <main>
       {% block content %}{% endblock %}

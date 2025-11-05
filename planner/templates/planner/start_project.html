@@ -1,0 +1,26 @@
+{% extends "planner/base.html" %}
+{% block content %}
+<div class="container" style="max-width:800px">
+  <h1>Start a New Project</h1>
+  <p class="text-muted">Give your project a title and list the group members. Everything will be saved under this project for easy management.</p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Project Title</label>
+      {{ form.title }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Group Member Names</label>
+      {{ form.member_names }}
+      <div class="form-text">One per line. Optional: <code>Name &lt;email@example.com&gt;</code></div>
+    </div>
+    <div style="text-align: center;">
+        <p><button type="submit" class="btn btn-primary">Create Project & Start → Background Research</button></p>
+        <p><a href="{% url 'planner:home' %}" class="btn btn-outline-secondary ms-2">Cancel</a></p>
+    </div>
+  </form>
+</div>
+{% endblock %}
