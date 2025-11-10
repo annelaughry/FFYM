@@ -1,0 +1,173 @@
+/* === COLOR PALETTE ===
+Primary:   #ee4266
+Accents:   #3abdb1ff, #f0b743ff, #bbbdf6
+======================== */
+
+:root {
+  --primary: #ee4266;
+  --accent1: #3abdb1ff;
+  --accent2: #f0b743ff;
+  --accent3: #bbbdf6;
+
+  --bg: #0b1020;
+  --card: #121a33;
+  --text: #ffffff;
+  --muted: #a8b2d1;
+  --radius: 14px;
+  --shadow: 0 8px 28px rgba(0,0,0,.35);
+}
+
+/* === GLOBAL === */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+header nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: rgba(238,66,102,0.12);
+  border-bottom: 2px solid var(--primary);
+}
+
+a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent1);
+  text-decoration: underline;
+}
+
+main {
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* === COMPONENTS === */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  border-left: 4px solid var(--primary);
+}
+
+button, .btn {
+  display: inline-block;
+  padding: 0.65rem 1.25rem;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background .2s ease-in-out, transform .2s;
+}
+button:hover, .btn:hover {
+  background: var(--accent2);
+  transform: translateY(-1px);
+}
+
+form { display: grid; gap: .75rem; }
+input, textarea, select {
+  width: 100%;
+  padding: .7rem .85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: #0e1630;
+  color: var(--text);
+  outline: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(238,66,102,0.3);
+}
+
+ul { padding-left: 1rem; }
+small { color: var(--muted); }
+
+/* === UTILITIES === */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.25rem;
+}
+
+.muted { color: var(--muted); }
+
+h1, h2, h3 {
+  color: var(--accent3);
+  letter-spacing: 0.5px;
+}
+h1 { border-bottom: 2px solid var(--primary); padding-bottom: .3rem; }
+
+/* === NOTIFICATIONS === */
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  margin: 1rem 0;
+}
+.alert-success {
+  background: rgba(58,189,177,.15);
+  border-left: 4px solid var(--accent1);
+}
+.alert-warning {
+  background: rgba(240,183,67,.15);
+  border-left: 4px solid var(--accent2);
+}
+.alert-info {
+  background: rgba(187,189,246,.15);
+  border-left: 4px solid var(--accent3);
+}
+.alert-error {
+  background: rgba(238,66,102,.15);
+  border-left: 4px solid var(--primary);
+}
+
+/* Mobile-first: everything already stacks nicely. Add desktop upgrades via min-width. */
+
+/* Small screens: tighten paddings a bit */
+@media (max-width: 480px) {
+  header nav { padding: .75rem 1rem; }
+  .card { padding: .85rem 1rem; }
+  h1 { font-size: 1.4rem; }
+}
+
+/* Tablets and up */
+@media (min-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr 2fr; }
+}
+
+/* Desktops and up */
+@media (min-width: 1024px) {
+  main { max-width: 1100px; }
+}
+
+/* Make dashboard sections stack on mobile but align side-by-side on wide screens */
+.dashboard-sections {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 900px) {
+  .dashboard-sections { grid-template-columns: 1fr 1fr; }
+}
+
+/* Responsive nav: stack items on mobile */
+.nav-links {
+  display: flex; gap: .75rem; flex-wrap: wrap; align-items: center;
+}
+@media (max-width: 520px) {
+  .nav-links { flex-direction: column; align-items: flex-start; }
+  .nav-links .btn { width: 100%; }
+}
+
+body.mobile .some-desktop-only { display: none; }
